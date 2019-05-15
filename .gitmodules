@@ -1,0 +1,3 @@
+[submodule "incubator-mxnet"]
+	path = mxnet
+	url = https://github.com/UofT-EcoSystem/incubator-mxnet
