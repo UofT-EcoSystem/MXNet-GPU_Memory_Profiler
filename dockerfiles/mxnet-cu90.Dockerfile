@@ -14,4 +14,4 @@ RUN apt-get update && \
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     python3 get-pip.py && rm -f get-pip.py
 
-RUN pip3 install pylint numpy cmake
+RUN pip3 install pylint cpplint numpy cmake
