@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        curl vim build-essential python3 \
+        curl vim build-essential python3-dev \
         libopencv-dev \
         libatlas-base-dev \
         libopenblas-dev \
