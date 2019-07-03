@@ -11,23 +11,6 @@ services:
         working_dir: /mnt
         command: >
             bash -c "set -e; 
-                     cd /mnt/mxnet; make -j $$(nproc) USE_LAPACK=1 \
-                                                      USE_LAPACK_PATH=/usr/lib/x86_64-linux-gnu/ \
-                                                      USE_CUDA=1 USE_CUDNN=1 \
-                                                      USE_CUDA_PATH=/usr/local/cuda;
-                     chown -R $$(stat -c '%u:%g' /mnt) .;"
-    mxnet-cu100:
-        image: mxnet-gpu:latest
-        build:
-            context: ./dockerfiles
-            dockerfile: mxnet-cu100.Dockerfile
-        volumes:
-            - .:/mnt
-        working_dir: /mnt
-        command: >
-            bash -c "set -e; 
-                     cd /mnt/mxnet; make -j $$(nproc) USE_LAPACK=1 \
-                                                      USE_LAPACK_PATH=/usr/lib/x86_64-linux-gnu/ \
-                                                      USE_CUDA=1 USE_CUDNN=1 \
-                                                      USE_CUDA_PATH=/usr/local/cuda;
+                     cd /mnt/mxnet; make -j 2 USE_CUDA=1 USE_CUDNN=1 \
+                                              USE_CUDA_PATH=/usr/local/cuda;
                      chown -R $$(stat -c '%u:%g' /mnt) .;"
