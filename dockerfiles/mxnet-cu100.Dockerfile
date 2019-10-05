@@ -1,8 +1,18 @@
-FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
+FROM nvidia/cuda:10.0-devel-ubuntu18.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN chmod ugo+rwXt /tmp
+
+ENV CUDNN_VERSION 7.6.3.30-1
+ENV CUDNN_MAJOR_VERSION 7
+ENV CUDNN_MINOR_VERSION 6
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        curl vim build-essential python3-dev \
+        libcudnn7=${CUDNN_VERSION}+cuda10.0 \
+        libcudnn7-dev=${CUDNN_VERSION}+cuda10.0 \
+        vim curl build-essential python3-dev \
         libatlas-base-dev \
         liblapack-dev \
         libopencv-dev \

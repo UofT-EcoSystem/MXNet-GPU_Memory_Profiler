@@ -1,16 +1,16 @@
 version: '2.3'
 
 services:
-    mxnet-cu90:
-        image: mxnet-gpu:latest
+    mxnet-gpu:
+        image: mxnet-gpu:latest.100
         build:
             context: ./dockerfiles
-            dockerfile: mxnet-cu90.Dockerfile
+            dockerfile: mxnet-cu100.Dockerfile
         volumes:
             - .:/mnt
         working_dir: /mnt
         command: >
-            bash -c "set -e; 
-                     cd /mnt/mxnet; make USE_CUDA=1 USE_CUDNN=1 \
-                                         USE_CUDA_PATH=/usr/local/cuda;
-                     chown -R $$(stat -c '%u:%g' /mnt) .;"
+            bash -ce "cd /mnt/mxnet
+                      make USE_CUDA=1 USE_CUDNN=1 \
+                           USE_CUDA_PATH=/usr/local/cuda
+                     chown -R $$(stat -c '%u:%g' /mnt) ."
