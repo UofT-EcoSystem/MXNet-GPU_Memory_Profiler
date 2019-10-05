@@ -11,6 +11,6 @@ services:
         working_dir: /mnt
         command: >
             bash -ce "cd /mnt/mxnet
-                      make USE_CUDA=1 USE_CUDNN=1 \
-                           USE_CUDA_PATH=/usr/local/cuda
-                     chown -R $$(stat -c '%u:%g' /mnt) ."
+                      make -j $$(nproc) USE_CUDA=1 USE_CUDNN=1 \
+                                        USE_CUDA_PATH=/usr/local/cuda
+                      chown -R $$(stat -c '%u:%g' /mnt) ."
