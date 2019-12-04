@@ -13,13 +13,13 @@ RUN apt-get update && \
         libcudnn7=${CUDNN_VERSION}+cuda10.0 \
         libcudnn7-dev=${CUDNN_VERSION}+cuda10.0 \
         vim curl build-essential python3-dev \
-        libatlas-base-dev \
-        liblapack-dev \
         libopencv-dev \
-        libjemalloc-dev && \
+        libatlas-base-dev && \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
-    python3 get-pip.py && rm -f get-pip.py
+    python3 get-pip.py && rm -f get-pip.py && \
+    apt-get purge -y curl && apt-get autoremove -y
 
-RUN pip3 install pylint cpplint numpy cmake
+RUN pip3 install pylint cpplint numpy \
+                 cmake==3.14.2
