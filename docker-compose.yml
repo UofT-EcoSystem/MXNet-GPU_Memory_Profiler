@@ -1,7 +1,7 @@
 version: '2.3'
 
 services:
-    mxnet-gpu:
+    mxnet-dev:
         image: mxnet-gpu:latest.100
         build:
             context: ./dockerfiles
