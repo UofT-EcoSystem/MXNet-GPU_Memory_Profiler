@@ -6,6 +6,7 @@ services:
         build:
             context: ./dockerfiles
             dockerfile: mxnet-cu100.Dockerfile
+        runtime: nvidia
         volumes:
             - .:/mnt
         working_dir: /mnt
