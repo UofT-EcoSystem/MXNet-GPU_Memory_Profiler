@@ -10,6 +10,7 @@ services:
         volumes:
             - .:/mnt
         working_dir: /mnt
+        privileged: true
         command: >
             bash -ce "cd /mnt/mxnet
                       make -j $$(nproc) USE_CUDA=1 USE_CUDNN=1 \
