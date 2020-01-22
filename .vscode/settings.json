@@ -1,4 +1,3 @@
- 
 {
         "files.watcherExclude":{
                 "**/mxnet/build/**":        true,
