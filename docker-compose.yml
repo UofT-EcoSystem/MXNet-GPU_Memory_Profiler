@@ -13,6 +13,6 @@ services:
         privileged: true
         command: >
             bash -ce "cd /mnt/mxnet
-                      make -j4 USE_CUDA=1 USE_CUDNN=1 \
+                      make -j16 USE_CUDA=1 USE_CUDNN=1 \
                                USE_CUDA_PATH=/usr/local/cuda
                       chown -R $$(stat -c '%u:%g' /mnt) ."
