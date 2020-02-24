@@ -14,5 +14,7 @@ services:
         command: >
             bash -ce "cd /mnt/mxnet
                       make -j16 USE_CUDA=1 USE_CUDNN=1 \
-                                USE_CUDA_PATH=/usr/local/cuda
+                                USE_CUDA_PATH=/usr/local/cuda \
+                                USE_LAPACK=1 \
+                                USE_CPP_PACKAGE=1
                       chown -R $$(stat -c '%u:%g' /mnt) ."

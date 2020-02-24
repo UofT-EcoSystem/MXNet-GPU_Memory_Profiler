@@ -14,7 +14,8 @@ RUN apt-get update && \
         libcudnn7-dev=${CUDNN_VERSION}+cuda10.0 \
         vim curl build-essential python3-dev \
         libopencv-dev \
-        libatlas-base-dev && \
+        libatlas-base-dev \
+        libjemalloc-dev && \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
