@@ -24,3 +24,5 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
 
 RUN pip3 install pylint==2.4.4 cpplint==1.4.4 \
                  numpy==1.17.4 cmake==3.12.0
+
+RUN ln -s /usr/bin/python3 /usr/bin/python
