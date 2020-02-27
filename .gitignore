@@ -1,0 +1,7 @@
+# IDE
+.vscode
+
+# Build Artifacts
+__pycache__
+profile.json
+gpu_memory_profile.csv
