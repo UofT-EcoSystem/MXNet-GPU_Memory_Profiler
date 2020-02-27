@@ -91,6 +91,12 @@ def add_fit_args(parser):
                        help='key-value store type')
     train.add_argument('--num-epochs', type=int, default=100,
                        help='max num of epochs')
+
+    # @MXNet-GPU_Memory_Profiler Add an extra argument on the maximum number of
+    #                            training steps (i.e., batches).
+    train.add_argument('--num-steps', type=int, default=100,
+                       help='max num of steps')
+
     train.add_argument('--lr', type=float, default=0.1,
                        help='initial learning rate')
     train.add_argument('--lr-factor', type=float, default=0.1,
@@ -318,21 +324,135 @@ def fit(args, network, data_loader, **kwargs):
         batch_end_callbacks += cbs if isinstance(cbs, list) else [cbs]
 
     # run
-    model.fit(train,
-              begin_epoch=args.load_epoch if args.load_epoch else 0,
-              num_epoch=args.num_epochs,
-              eval_data=val,
-              eval_metric=eval_metrics,
-              kvstore=kv,
-              optimizer=args.optimizer,
-              optimizer_params=optimizer_params,
-              initializer=initializer,
-              arg_params=arg_params,
-              aux_params=aux_params,
-              batch_end_callback=batch_end_callbacks,
-              epoch_end_callback=checkpoint,
-              allow_missing=True,
-              monitor=monitor)
+    # @MXNet-GPU_Memory_Profiler Replaced the `fit` method call with its
+    #                            equivalent definition.
+    # model.fit(train,
+    #           begin_epoch=args.load_epoch if args.load_epoch else 0,
+    #           num_epoch=args.num_epochs,
+    #           eval_data=val,
+    #           eval_metric=eval_metrics,
+    #           kvstore=kv,
+    #           optimizer=args.optimizer,
+    #           optimizer_params=optimizer_params,
+    #           initializer=initializer,
+    #           arg_params=arg_params,
+    #           aux_params=aux_params,
+    #           batch_end_callback=batch_end_callbacks,
+    #           epoch_end_callback=checkpoint,
+    #           allow_missing=True,
+    #           monitor=monitor)
+    train_data = train
+    eval_data = val
+    begin_epoch = args.load_epoch if args.load_epoch else 0
+    # @MXNet-GPU_Memory_Profiler Added the maximum number of training batches.
+    num_epoch = args.num_epochs
+    num_steps = args.num_steps
+    eval_metric = eval_metrics
+    kvstore = kv
+    optimizer = args.optimizer
+    optimizer_params = optimizer_params
+    initializer = initializer
+    arg_params = arg_params
+    aux_params = aux_params
+    batch_end_callback = batch_end_callbacks
+    epoch_end_callback = checkpoint
+    allow_missing = True
+    monitor = monitor
+    force_rebind = False
+    force_init = False
+    validation_metric = None
+    sparse_row_id_fn = None
+    eval_end_callback = None
+    eval_batch_end_callback = None
+
+    model.bind(data_shapes=train_data.provide_data, label_shapes=train_data.provide_label,
+              for_training=True, force_rebind=force_rebind)
+    if monitor is not None:
+        model.install_monitor(monitor)
+    model.init_params(initializer=initializer, arg_params=arg_params, aux_params=aux_params,
+                      allow_missing=allow_missing, force_init=force_init)
+    model.init_optimizer(kvstore=kvstore, optimizer=optimizer,
+                         optimizer_params=optimizer_params)
+
+    if validation_metric is None:
+        validation_metric = eval_metric
+    if not isinstance(eval_metric, mx.metric.EvalMetric):
+        eval_metric = mx.metric.create(eval_metric)
+
+    # ==========================================================================
+    # training loop
+    # ==========================================================================
+    nsteps = 0
+    for epoch in range(begin_epoch, num_epoch):
+        tic = time.time()
+        eval_metric.reset()
+        nbatch = 0
+        data_iter = iter(train_data)
+        end_of_batch = False
+        next_data_batch = next(data_iter)
+        while not end_of_batch:
+            if num_steps is not None and nsteps > num_steps:
+                break
+
+            data_batch = next_data_batch
+            if monitor is not None:
+                monitor.tic()
+            model.forward_backward(data_batch)
+            model.update()
+
+            if isinstance(data_batch, list):
+                model.update_metric(eval_metric,
+                                    [db.label for db in data_batch],
+                                    pre_sliced=True)
+            else:
+                model.update_metric(eval_metric, data_batch.label)
+
+            try:
+                # pre fetch next batch
+                next_data_batch = next(data_iter)
+                model.prepare(next_data_batch, sparse_row_id_fn=sparse_row_id_fn)
+            except StopIteration:
+                end_of_batch = True
+
+            if monitor is not None:
+                monitor.toc_print()
+
+            if batch_end_callback is not None:
+                batch_end_params = mx.model.BatchEndParam(epoch=epoch, nbatch=nbatch,
+                                                          eval_metric=eval_metric,
+                                                          locals=locals())
+                for callback in mx.base._as_list(batch_end_callback):
+                    callback(batch_end_params)
+            nbatch += 1
+            nsteps += 1
+
+        # one epoch of training is finished
+        for name, val in eval_metric.get_global_name_value():
+            model.logger.info('Epoch[%d] Train-%s=%f', epoch, name, val)
+        toc = time.time()
+        model.logger.info('Epoch[%d] Time cost=%.3f', epoch, (toc-tic))
+
+        # sync aux params across devices
+        arg_params, aux_params = model.get_params()
+        model.set_params(arg_params, aux_params)
+
+        if epoch_end_callback is not None:
+            for callback in mx.base._as_list(epoch_end_callback):
+                callback(epoch, model.symbol, arg_params, aux_params)
+
+        #----------------------------------------
+        # evaluation on validation set
+        if eval_data:
+            res = model.score(eval_data, validation_metric,
+                              score_end_callback=eval_end_callback,
+                              batch_end_callback=eval_batch_end_callback, epoch=epoch)
+            #TODO: pull this into default
+            for name, val in res:
+                model.logger.info('Epoch[%d] Validation-%s=%f', epoch, name, val)
+
+        # end of 1 epoch, reset the data-iter for another epoch
+        train_data.reset()
+
 
     if args.profile_server_suffix:
         mx.profiler.set_state(state='run', profile_process='server')
