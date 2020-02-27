@@ -57,10 +57,21 @@ if __name__ == '__main__':
     if args.use_imagenet_data_augmentation:
         set_imagenet_aug(parser)
 
+    # @MXNet-GPU_Memory_Profiler Added the profiler start and stop point.
+    mx.profiler.set_config(gpu_memory_profile_filename='resnet-gpu_memory_profile-L_%d-B_%d.csv' % \
+                                                       (args.num_layers, args.batch_size),
+                           profile_memory=True)
+    mx.profiler.set_state('run')
+
     # load network
     from importlib import import_module
     net = import_module('symbols.'+args.network)
-    sym = net.get_symbol(**vars(args))
+    with mx.profiler.Scope('resnetL%d' % args.num_layers):
+        sym = net.get_symbol(**vars(args))
 
     # train
     fit.fit(args, sym, data.get_rec_iter)
+    
+    # @MXNet-GPU_Memory_Profiler Added the profiler start and stop point.
+    mx.profiler.set_state('stop')
+    mx.profiler.dump(True)
