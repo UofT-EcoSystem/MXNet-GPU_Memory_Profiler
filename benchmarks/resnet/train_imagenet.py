@@ -63,14 +63,14 @@ if __name__ == '__main__':
                            profile_memory=True)
     mx.profiler.set_state('run')
 
-    # load network
-    from importlib import import_module
-    net = import_module('symbols.'+args.network)
     with mx.profiler.Scope('resnetL%d' % args.num_layers):
+        # load network
+        from importlib import import_module
+        net = import_module('symbols.'+args.network)
         sym = net.get_symbol(**vars(args))
 
-    # train
-    fit.fit(args, sym, data.get_rec_iter)
+        # train
+        fit.fit(args, sym, data.get_rec_iter)
     
     # @MXNet-GPU_Memory_Profiler Added the profiler start and stop point.
     mx.profiler.set_state('stop')
