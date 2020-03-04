@@ -58,8 +58,9 @@ if __name__ == '__main__':
         set_imagenet_aug(parser)
 
     # @MXNet-GPU_Memory_Profiler Added the profiler start and stop point.
-    mx.profiler.set_config(gpu_memory_profile_filename='resnet-gpu_memory_profile-L_%d-B_%d.csv' % \
-                                                       (args.num_layers, args.batch_size),
+    mx.profiler.set_config(gpu_memory_profile_filename_prefix=\
+                               'resnet-gpu_memory_profile-L_%d-B_%d' % \
+                               (args.num_layers, args.batch_size),
                            profile_memory=True)
     mx.profiler.set_state('run')
 

@@ -563,6 +563,12 @@ def train(metric):
     best_metric = None
     patience = args.early_stop
 
+    # @MXNet-GPU_Memory_Profiler Added the profiler start and stop point.
+    mx.profiler.set_config(gpu_memory_profile_filename_prefix=
+                               'finetune_classifier',
+                           profile_memory=True)
+    mx.profiler.set_state('run')
+
     tic = time.time()
     finish_flag = False
     for epoch_id in range(epoch_number):
@@ -649,6 +655,10 @@ def train(metric):
             toc = time.time()
             logging.info('Time cost=%.2fs', toc - tic)
             tic = toc
+
+    # @MXNet-GPU_Memory_Profiler Added the profiler start and stop point.
+    mx.profiler.set_state('stop')
+    mx.profiler.dump(True)
 
     if not only_inference:
         # we choose the best model based on metric[0],
