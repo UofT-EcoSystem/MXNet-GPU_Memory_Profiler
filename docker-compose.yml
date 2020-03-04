@@ -20,3 +20,11 @@ services:
                                 USE_JEMALLOC=1 \
                                 USE_CPP_PACKAGE=1
                       chown -R $$(stat -c '%u:%g' /mnt) ."
+    resnet-dev:
+        image: mxnet-gpu:latest.100
+        runtime: nvidia
+        volumes:
+            - .:/mnt
+            - /scratch/datasets/imagenet/MXRecords:/dataset
+        working_dir: /mnt
+        pid: host
