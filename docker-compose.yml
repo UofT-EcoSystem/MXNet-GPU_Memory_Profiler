@@ -10,7 +10,7 @@ services:
         volumes:
             - .:/mnt
         working_dir: /mnt
-        privileged: true
+        pid: host
         command: >
             bash -ce "cd /mnt/mxnet
                       make -j16 USE_CUDA=1 USE_CUDNN=1 \
