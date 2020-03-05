@@ -203,6 +203,11 @@ parser.add_argument('--calib_mode', type=str, default='customize',
 
 args = parser.parse_args()
 
+# @MXNet-GPU_Memory_Profiler Added the profiler start and stop point.
+mx.profiler.set_config(gpu_memory_profile_filename_prefix=
+                           'finetune_classifier',
+                       profile_memory=True)
+mx.profiler.set_state('run')
 
 log = logging.getLogger()
 log.setLevel(logging.INFO)
@@ -717,11 +722,6 @@ if __name__ == '__main__':
             nlp.utils.version.check_version('1.7.0', warning_only=True, library=mx)
             warnings.warn('INT8 Quantization for BERT need mxnet-mkl >= 1.6.0b20200115')
     else:
-        # @MXNet-GPU_Memory_Profiler Added the profiler start and stop point.
-        mx.profiler.set_config(gpu_memory_profile_filename_prefix=
-                                   'finetune_classifier',
-                               profile_memory=True)
-        mx.profiler.set_state('run')
         train(task.metrics)
          # @MXNet-GPU_Memory_Profiler Added the profiler start and stop point.
         mx.profiler.set_state('stop')
