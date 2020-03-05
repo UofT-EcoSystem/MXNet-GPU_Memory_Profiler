@@ -563,12 +563,6 @@ def train(metric):
     best_metric = None
     patience = args.early_stop
 
-    # @MXNet-GPU_Memory_Profiler Added the profiler start and stop point.
-    mx.profiler.set_config(gpu_memory_profile_filename_prefix=
-                               'finetune_classifier',
-                           profile_memory=True)
-    mx.profiler.set_state('run')
-
     tic = time.time()
     finish_flag = False
     for epoch_id in range(epoch_number):
@@ -656,10 +650,6 @@ def train(metric):
             logging.info('Time cost=%.2fs', toc - tic)
             tic = toc
 
-    # @MXNet-GPU_Memory_Profiler Added the profiler start and stop point.
-    mx.profiler.set_state('stop')
-    mx.profiler.dump(True)
-
     if not only_inference:
         # we choose the best model based on metric[0],
         # assuming higher score stands for better model quality
@@ -727,4 +717,12 @@ if __name__ == '__main__':
             nlp.utils.version.check_version('1.7.0', warning_only=True, library=mx)
             warnings.warn('INT8 Quantization for BERT need mxnet-mkl >= 1.6.0b20200115')
     else:
+        # @MXNet-GPU_Memory_Profiler Added the profiler start and stop point.
+        mx.profiler.set_config(gpu_memory_profile_filename_prefix=
+                                   'finetune_classifier',
+                               profile_memory=True)
+        mx.profiler.set_state('run')
         train(task.metrics)
+         # @MXNet-GPU_Memory_Profiler Added the profiler start and stop point.
+        mx.profiler.set_state('stop')
+        mx.profiler.dump(True)
