@@ -13,7 +13,7 @@ services:
         pid: host
         command: >
             bash -ce "cd /mnt/mxnet
-                      make -j16 USE_CUDA=1 USE_CUDNN=1 \
+                      make -j16 USE_CUDA=1 USE_CUDNN=1 USE_NVML=1 \
                                 USE_CUDA_PATH=/usr/local/cuda \
                                 USE_LAPACK=1 \
                                 USE_LAPACK_PATH=/usr/lib/x86_64-linux-gnu \
