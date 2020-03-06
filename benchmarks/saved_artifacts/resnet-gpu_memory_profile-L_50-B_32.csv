@@ -1929,5 +1929,5 @@
 "updater:optimizer_state:_zeros","2048","1","4096","0"
 "updater:optimizer_state:_zeros","1024","1","4096","0"
 "updater:optimizer_state:_zeros","1024","1","4096","0"
-"nvml:amend","672624640","1","672624640","0"
-"nvml:amend","285976064","0","285976064","0"
+"nvml_amend","672624640","1","672624640","0"
+"nvml_amend","285976064","0","285976064","0"
