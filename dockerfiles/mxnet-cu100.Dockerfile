@@ -13,8 +13,9 @@ RUN apt-get update && \
         libcudnn7=${CUDNN_VERSION}+cuda10.0 \
         libcudnn7-dev=${CUDNN_VERSION}+cuda10.0 \
         vim curl build-essential python3-dev \
-        libopencv-dev \
         libatlas-base-dev \
+        libopenblas-dev \
+        libopencv-dev \
         libjemalloc-dev && \
     rm -rf /var/lib/apt/lists/*
 
