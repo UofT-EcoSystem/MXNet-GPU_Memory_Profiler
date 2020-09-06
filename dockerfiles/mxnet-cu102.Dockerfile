@@ -23,7 +23,13 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     python3 get-pip.py && rm -f get-pip.py
     # Cannot uninstall `curl` because it is needed by MKL-DNN.
 
-RUN pip3 install pylint==2.4.4 cpplint==1.4.4 numpy==1.17.4 cmake==3.12.0 \
-                 requests==2.24.0 pytest==6.0.1 nose==1.3.7
+RUN pip3 install pylint==2.4.4    \
+                 cpplint==1.4.4   \
+                 numpy==1.17.4    \
+                 cmake==3.14.0    \
+                 requests==2.24.0 \
+                 pytest==6.0.1    \
+                 nose==1.3.7      \
+                 contextvars==2.4
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
