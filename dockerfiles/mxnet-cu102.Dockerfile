@@ -26,7 +26,7 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
 RUN pip3 install pylint==2.4.4    \
                  cpplint==1.4.4   \
                  numpy==1.17.4    \
-                 cmake==3.14.0    \
+                 cmake==3.18.2    \
                  requests==2.24.0 \
                  pytest==6.0.1    \
                  nose==1.3.7      \
