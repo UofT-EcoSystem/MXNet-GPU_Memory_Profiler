@@ -1,3 +1,6 @@
 [submodule "incubator-mxnet"]
 	path = mxnet
 	url = https://github.com/UofT-EcoSystem/incubator-mxnet
+[submodule "visualizer"]
+	path = visualizer
+	url = https://github.com/UofT-EcoSystem/MXNet-GPU_Memory_Profiler-Vis
