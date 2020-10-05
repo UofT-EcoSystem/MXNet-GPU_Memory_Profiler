@@ -30,7 +30,6 @@ RUN pip3 install pylint==2.4.4    \
                  cmake==3.18.2    \
                  requests==2.24.0 \
                  pytest==6.0.1    \
-                 nose==1.3.7      \
                  contextvars==2.4
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
