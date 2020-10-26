@@ -11,4 +11,3 @@ services:
             - .:/mnt
         working_dir: /mnt
         pid: host
-        shm_size: 16g
